@@ -1,15 +1,20 @@
 const express = require("express");
 const path = require("path");
 const sqlite3 = require("sqlite3").verbose();
+const crypto = require('crypto');
+
+
+
 
 // Création du serveur Express
 const app = express();
-
-// Configuration du serveur
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
-app.use(express.static(path.join(__dirname, "public")));
-app.use(express.urlencoded({ extended: false }));
+const nunjucks = require('nunjucks');
+nunjucks.configure('views', {
+  autoescape: true,
+  express: app
+});
+app.set('view engine', 'html');
+app.use(express.static("public"));
 
 // Connexion à la base de donnée SQlite
 const db_name = path.join(__dirname, "data", "apptest.db");
@@ -27,6 +32,8 @@ const sql_create = `CREATE TABLE IF NOT EXISTS Livres (
   Auteur VARCHAR(100) NOT NULL,
   Commentaires TEXT
 );`;
+
+const sql_
 db.run(sql_create, err => {
   if (err) {
     return console.error(err.message);
@@ -47,18 +54,22 @@ db.run(sql_create, err => {
 
 // Démarrage du serveur
 app.listen(3000, () => {
-    console.log("Serveur démarré (http://localhost:3000/) !");
+    console.log("Serveur démarré (http://localhost:3000/ ) !");
 });
 
 // GET /
 app.get("/", (req, res) => {
   // res.send("Bonjour le monde...");
-  res.render("index");
+  res.render("index.html");
 });
 
 // GET /about
 app.get("/about", (req, res) => {
   res.render("about");
+});
+
+app.get("/subscribe", (req, res) => {
+  res.render("subscribe");
 });
 
 // GET /data
@@ -97,6 +108,36 @@ app.post("/create", (req, res) => {
     res.redirect("/livres");
   });
 });
+
+function hashPassword(password, salt) {
+  var hash = crypto.createHash('sha256');
+  hash.update(password);
+  hash.update(salt);
+  return hash.digest('hex');
+}
+
+passport.use(new LocalStrategy(function(username, password, done) {
+  db.get('SELECT salt FROM users WHERE username = ?', username, function(err, row) {
+    if (!row) return done(null, false);
+    var hash = hashPassword(password, row.salt);
+    db.get('SELECT username, id FROM users WHERE username = ? AND password = ?', username, hash, function(err, row) {
+      if (!row) return done(null, false);
+      return done(null, row);
+    });
+  });
+}));
+
+passport.serializeUser(function(user, done) {
+  return done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  db.get('SELECT id, username FROM users WHERE id = ?', id, function(err, row) {
+    if (!row) return done(null, false);
+    return done(null, row);
+  });
+});
+
 
 // GET /edit/5
 app.get("/edit/:id", (req, res) => {
