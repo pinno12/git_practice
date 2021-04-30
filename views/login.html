@@ -1,0 +1,16 @@
+{% include "_header.html" %}
+<h1>Login</h1>
+<form method="post">
+
+	<input type="hidden" name="_csrf" value="{{csrfToken}}" />
+
+	<label for=phone>Username</label>
+	<input id="phone" type="text" name="phone" value="{{form.phone}}" />
+
+	<label for="password">Password</label>
+	<input id="password" type="password" name="password" />
+
+	<button type="submit">Login</button>
+</form>
+
+{% include "_footer.html" %}
