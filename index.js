@@ -5,13 +5,18 @@ const session = require('express-session')
 const csurf = require('csurf')
 const helmet = require('helmet')
 const passport = require('passport')
-const LocalStrategy = require('passport-local').LocalStrategy
-const db = requrie('./db')(session)
+// const LocalStrategy = require('passport-local').LocalStrategy
+var LocalStrategy   = require('passport-local').Strategy
+const db = require('./routes/db')(session)
 const path = require("path");
 const sqlite3 = require("sqlite3").verbose();
 const crypto = require('crypto');
 const app = express();
+  
+require('dotenv').config()
 
+// ES6 Module loader
+require = require('esm')(module)
 const nunjucks = require('nunjucks');
 nunjucks.configure('views', {
   autoescape: true,
@@ -22,12 +27,12 @@ app.use(express.static("public"));
 
 //connection to db
 const db_name = path.join(__dirname, "data", "apptest.db");
-const db = new sqlite3.Database(db_name, err => {
-  if (err) {
-    return console.error(err.message);
-  }
-  console.log("Connexion réussie à la base de données 'apptest.db'");
-});
+// const db = new sqlite3.Database(db_name, err => {
+//   if (err) {
+//     return console.error(err.message);
+//   }
+//   console.log("Connexion réussie à la base de données 'apptest.db'");
+// });
 
 app.use(session({
   secret: 'awesome chinchin',
@@ -53,12 +58,17 @@ app.use((req,res,next)=> {
 })
 
 //Username 바꾸기
-passport.use(new LocalStrategy((username,password,done) => {
-  db.getUserByUsername(username)
-  .then(async (user) => {
-    if (!user) return done(new Error('등록되지 않은 번호입니다'), false)
-    if (!(await db.isPasswordHashVerified(user.password_hash,password))) return done(new Error('Invalid Password'), false)
-    return done(null, user)
+
+
+passport.serializeUser((user, cb) => {
+	cb(null, user.uid)
+})
+passport.use(new LocalStrategy((phone,password,done) => {
+  db.getUserByPhone(phone)
+  .then(async (phone) => {
+    if (!phone) return done(new Error('등록되지 않은 번호입니다'), false)
+    if (!(await db.isPasswordHashVerified(phone.password_hash,password))) return done(new Error('Invalid Password'), false)
+    return done(null, phone)
   })
   .catch((err) =>{
     return done(err)
@@ -89,24 +99,8 @@ const sql_create = `CREATE TABLE IF NOT EXISTS Livres (
   Commentaires TEXT
 );`;
 
-const sql_
-db.run(sql_create, err => {
-  if (err) {
-    return console.error(err.message);
-  }
-  console.log("Création réussie de la table 'Livres'");
-  // Alimentation de la table
-  const sql_insert = `INSERT INTO Livres (Livre_ID, Titre, Auteur, Commentaires) VALUES
-  (1, 'Mrs. Bridge', 'Evan S. Connell', 'Premier de la série'),
-  (2, 'Mr. Bridge', 'Evan S. Connell', 'Second de la série'),
-  (3, 'L''ingénue libertine', 'Colette', 'Minne + Les égarements de Minne');`;
-  db.run(sql_insert, err => {
-    if (err) {
-      return console.error(err.message);
-    }
-    console.log("Alimentation réussie de la table 'Livres'");
-  });
-});
+
+
 
 // Démarrage du serveur
 app.listen(3000, () => {
@@ -206,17 +200,16 @@ else{
   })
 }))
 .catch(error => {
-  let errorMsg = (error&& error.message ) || ''
-  if (!error && req.query.required) errorMsg = '다시 로그인해주세요'
+			let errorMsg = (error && error.message) || ''
+			if (!error && req.query.required) errorMsg = 'Authentication required'
 
-  res.render('login', {
-    csrfToken: req.csrfToken(),
-    hasError: (errorMsg && errorMsg.length > 0), 
-    error, errorMsg,
-    form: req.body
-  })
-
-  })
+			res.render('login', {
+				csrfToken: req.csrfToken(),
+				hasError: (errorMsg && errorMsg.length > 0),
+				error: errorMsg,
+				form: req.body,
+			})
+		})
 })
 
 app.all('/register', (req,res) => {
@@ -278,7 +271,7 @@ app.all('/register', (req,res) => {
   })
 })
 
-get('/logout', authRequired, (req,res)=>{
+app.get('/logout', authRequired, (req,res)=>{
   req.logout()
   res.render('/')
 })
@@ -330,3 +323,4 @@ app.post("/delete/:id", (req, res) => {
     res.redirect("/livres");
   });
 });
+
