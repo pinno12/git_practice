@@ -1,0 +1,4 @@
+# Fichiers à ignorer
+.vs/
+node_modules/
+
