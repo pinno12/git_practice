@@ -3,18 +3,17 @@ const bcrypt = require('bcryptjs')
 
 const DATABASE_URL = process.env.DATABASE_URL
 
-
 const sequelize = new Sequelize({
-  dialect: 'sqlite',
-  storage: 'data/apptest.db',  
-  logging: false
-});
-
+	dialect: 'sqlite',
+	storage: 'data/apptest.db',  
+	logging: false
+  });
 
 const globalModelConfig = {
 	underscored: true,
 	timestamps: true,
 }
+
 sequelize.authenticate()
 	.then(() => {
 		// eslint-disable-next-line no-console
@@ -32,52 +31,38 @@ const SessionModel = sequelize.define('Session', {
 	},
 	expires: Sequelize.DATE,
 	data: Sequelize.STRING(50000),
-},
-)
+}, globalModelConfig)
 
-const UserModel = sequelize.define('Users', {
-	id: {
+const UserModel = sequelize.define('User', {
+	uid: {
 		type: Sequelize.INTEGER,
 		primaryKey: true,
 		autoIncrement: true,
 	},
 	username: Sequelize.STRING(30),
-	phone: Sequelize.STRING(15),
-	pwd: Sequelize.STRING(15),	
+	phone: Sequelize.STRING(255),
 	password_hash: Sequelize.STRING(255),
-}, 
-globalModelConfig
-)
+}, globalModelConfig)
 
 sequelize.sync({
 	alter: true
 })
 
-const Friend = sequelize.define('Friends', {
-	id: {
-		type: Sequelize.INTEGER,
-		primaryKey: true,
-		autoIncrement: true
-	},
-	phone: Sequelize.STRING(15),
-	name: Sequelize.STRING(30)
-}, 
-globalModelConfig
-)
+// const runQuery = (query, values, queryType) => sequelize.query(query, {
+// 	replacements: values,
+// 	type: queryType || sequelize.QueryTypes.SELECT
+// })
 
-Friend.belongsTo(UserModel);
+const getUserById = uid => UserModel.findOne({ where: { uid } })
+const getUserByUsername = username => UserModel.findOne({ where: { username } })
+const getUserByphone = phone => UserModel.findOne({ where: { phone } })
 
-const getUserByPhone = (phone) => UserModel.findOne({ 
-	where: 
-{ phone: phone }
-	
-})
-
-const getUserById = id => UserModel.findOne({ where: { id } })
-// const getUserByPhone = phone => UserModel.findOne({ where: { phone } })
+const isUsernameInUse = async username => {
+	return await getUserByUsername(username) !== null
+}
 
 const isphoneInUse = async phone => {
-	return (await getUserByPhone(phone) ? true : false)
+	return (await getUserByphone(phone) ? true : false)
 }
 
 const createUserRecord = userObj => new Promise(async (resolve, reject) => {
@@ -85,7 +70,7 @@ const createUserRecord = userObj => new Promise(async (resolve, reject) => {
 	UserModel.create({
 		phone: userObj.phone,
 		username: userObj.username,
-		password_hash: passwdHash,
+		password_hash: passwdHash
 	})
 		.then((createdUser) => {
 			resolve(createdUser)
@@ -116,17 +101,20 @@ const isPasswordHashVerified = (hash, password) => new Promise(async (resolve, r
 	}
 })
 
-
 module.exports = (session) => {
 	const SequelizeStore = require('connect-session-sequelize')(session.Store)
+	
 	const SessionStore = new SequelizeStore({
 		db: sequelize,
 		table: 'Session'
 	})
 
 	return {
-		SessionStore,			
-		getUserByPhone,		
+		SessionStore,
+		getUserById,
+		getUserByUsername,
+		getUserByphone,
+		isUsernameInUse,
 		isphoneInUse,
 		createUserRecord,
 		isPasswordHashVerified,
