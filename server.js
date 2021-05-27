@@ -59,8 +59,12 @@ app.use((req, res, next) => {
 	next()
 })
 
-passport.use(new LocalStrategy((username, password, done) => {
-	db.getUserByUsername(username)
+passport.use(new LocalStrategy({
+	usernameField: 'phone',
+    passwordField: 'password'
+  },
+	(username, password, done) => {
+	db.getUserByphone(username)
 		.then(async (user) => {
 			if (!user) return done(new Error('User not found!'), false)
 			if (!(await db.isPasswordHashVerified(user.password_hash, password))) return done(new Error('Invalid Password'), false)
@@ -105,9 +109,10 @@ app.get('/member', authRequired, (req, res) => {
 app.all('/login', (req, res, next) => {
 	new Promise((resolve, reject) => {
 		if (req.method === 'GET') { return reject() }
-		if (req.body.username && req.body.password) {
+		if (req.body.phone && req.body.password) {
+			console.log(req.body.phone)
 			passport.authenticate('local', (err, user, info) => {
-				if (!err && user) {
+				if (!err && user) {			
 					return resolve(user)
 				}
 				reject(err)
@@ -120,13 +125,14 @@ app.all('/login', (req, res, next) => {
 		.then(user => new Promise((resolve, reject) => {
 			req.login(user, err => { // save authentication
 				if (err) return reject(err)
-				console.log('auth completed - redirecting to member area')
-				return res.send('<script>location.href="/member";</script>')
+				console.log(req.body.phone, 'auth completed - redirecting to member area')
+				// return res.send('<script>location.href="/member";</script>')
+				return res.redirect('/member')
 			})
 		}))
 		.catch(error => {
 			let errorMsg = (error && error.message) || ''
-			if (!error && req.query.required) errorMsg = 'Authentication required'
+			if (!error && req.query.required) errorMsg = '로그인해주세요'
 
 			res.render('login', {
 				csrfToken: req.csrfToken(),
@@ -142,8 +148,7 @@ app.all('/register', (req, res) => {
 		if (Object.keys(req.body).length > 0) {
 			// console.log(req.body)
 			if (
-				!(req.body.phone && req.body.phone.length > 1)
-				|| !(req.body.username && req.body.username.length > 1)
+				!(req.body.phone && req.body.phone.length > 1)		
 				|| !(req.body.password && req.body.password.length > 1)
 				|| !(req.body.password2 && req.body.password2.length > 1)
 			) {
@@ -152,12 +157,10 @@ app.all('/register', (req, res) => {
 			else if (req.body.password !== req.body.password2) {
 				reject("Password don't match")
 			}
-			else if (await db.isUsernameInUse(req.body.username)) {
-				reject('Username is taken')
-			}
 			else if (await db.isphoneInUse(req.body.phone)) {
-				reject('phone address is already registered')
+				reject('phone is taken')
 			}
+		
 			else {
 				resolve(true)
 			}
@@ -169,7 +172,7 @@ app.all('/register', (req, res) => {
 		.then(isValidFormData => new Promise((resolve, reject) => {
 			if (Object.keys(req.body).length > 0 && isValidFormData) {
 				db.createUserRecord({
-					username: req.body.username,
+			
 					phone: req.body.phone,
 					password: req.body.password
 				})
@@ -218,4 +221,4 @@ app.get('/logout', authRequired, (req, res) => {
 })
 
 // App start
-app.listen(PORT, () => console.log(`App listening on port ${PORT}!`))
+app.listen(PORT, () => console.log(`App listening on port http://localhost:${PORT} !`))

@@ -8,11 +8,4 @@
 
 ### Run
 
-1. `npm install`
-2. `node index.js`
-
-
-nodemon index.js
-
-test
-
+npm start

@@ -9,14 +9,12 @@ rc.circle(40, 70,80,  {
   stroke: 'white'
 });
 rc.circle(120, 90, 80,  {
-  fill: 'white',
-  hachureAngle: 60, hachureGap: 5
+  fill: 'black',
+  hachureAngle: 60, hachureGap: 5,
+  stroke: 'black'
 });
 
 // ellipse and circle
-
-
-
 
 
 $('.ui.modal')

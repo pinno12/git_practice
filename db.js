@@ -39,8 +39,7 @@ const UserModel = sequelize.define('User', {
 		primaryKey: true,
 		autoIncrement: true,
 	},
-	username: Sequelize.STRING(30),
-	phone: Sequelize.STRING(255),
+	phone: Sequelize.STRING(30),
 	password_hash: Sequelize.STRING(255),
 }, globalModelConfig)
 
@@ -54,12 +53,12 @@ sequelize.sync({
 // })
 
 const getUserById = uid => UserModel.findOne({ where: { uid } })
-const getUserByUsername = username => UserModel.findOne({ where: { username } })
 const getUserByphone = phone => UserModel.findOne({ where: { phone } })
 
-const isUsernameInUse = async username => {
-	return await getUserByUsername(username) !== null
-}
+
+// const isphoneInUse = async phone => {
+// 	return await getUserByphone(phone) !== null
+// }
 
 const isphoneInUse = async phone => {
 	return (await getUserByphone(phone) ? true : false)
@@ -68,8 +67,8 @@ const isphoneInUse = async phone => {
 const createUserRecord = userObj => new Promise(async (resolve, reject) => {
 	const passwdHash = await createPasswordHash(userObj.password)
 	UserModel.create({
+
 		phone: userObj.phone,
-		username: userObj.username,
 		password_hash: passwdHash
 	})
 		.then((createdUser) => {
@@ -111,10 +110,8 @@ module.exports = (session) => {
 
 	return {
 		SessionStore,
-		getUserById,
-		getUserByUsername,
+		getUserById,	
 		getUserByphone,
-		isUsernameInUse,
 		isphoneInUse,
 		createUserRecord,
 		isPasswordHashVerified,
