@@ -24,8 +24,8 @@ nunjucks.configure('views', {
 
 app.use(cookieParser())
 app.use(express.static('public'))
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+// app.use(bodyParser.json())
+// app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use(session({
 	secret: 'awesome auth',
@@ -102,6 +102,15 @@ app.get("/about", (req, res) => {
 	res.render("subscribe");
   });
 
+  app.get("/subscribe", (req, res) => {
+	res.render("subscribe");
+  });
+
+  app.get("/create", (req, res) => {
+	res.render("create");
+  });
+
+
 app.get('/member', authRequired, (req, res) => {
 	res.render('member')
 })
@@ -146,21 +155,15 @@ app.all('/login', (req, res, next) => {
 app.all('/register', (req, res) => {
 	new Promise(async (resolve, reject) => {
 		if (Object.keys(req.body).length > 0) {
-			// console.log(req.body)
 			if (
 				!(req.body.phone && req.body.phone.length > 1)		
-				|| !(req.body.password && req.body.password.length > 1)
-				|| !(req.body.password2 && req.body.password2.length > 1)
+				|| !(req.body.password && req.body.password.length > 1)			
 			) {
-				reject('Please fill all fields')
-			}
-			else if (req.body.password !== req.body.password2) {
-				reject("Password don't match")
+				reject('다 채워라잉')
 			}
 			else if (await db.isphoneInUse(req.body.phone)) {
-				reject('phone is taken')
-			}
-		
+				reject('친구, 이미 가입했소')
+			}		
 			else {
 				resolve(true)
 			}

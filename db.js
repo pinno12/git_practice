@@ -39,18 +39,41 @@ const UserModel = sequelize.define('User', {
 		primaryKey: true,
 		autoIncrement: true,
 	},
-	phone: Sequelize.STRING(30),
+	name: Sequelize.STRING(30),
+	phone: Sequelize.TEXT,
 	password_hash: Sequelize.STRING(255),
 }, globalModelConfig)
+
+const SoloModel = sequelize.define('Solo', {
+	id: {
+		type: Sequelize.INTEGER,
+		primaryKey: true,
+		autoIncrement: true,
+	},
+	pros: Sequelize.TEXT,
+	cons: Sequelize.TEXT,
+	age: Sequelize.INTEGER,
+	etc: Sequelize.TEXT,
+	isSolo: Sequelize.BOOLEAN,
+	gender: Sequelize.ENUM('W','M')
+}, globalModelConfig)
+
+SoloModel.belongsTo(UserModel);
+
+const Friends = sequelize.define('Friends', {
+	id: {
+		type: Sequelize.INTEGER,
+		primaryKey: true,
+		autoIncrement: true,
+	},
+	friendPhone: Sequelize.TEXT
+}, globalModelConfig)
+
+Friends.belongsTo(UserModel); 
 
 sequelize.sync({
 	alter: true
 })
-
-// const runQuery = (query, values, queryType) => sequelize.query(query, {
-// 	replacements: values,
-// 	type: queryType || sequelize.QueryTypes.SELECT
-// })
 
 const getUserById = uid => UserModel.findOne({ where: { uid } })
 const getUserByphone = phone => UserModel.findOne({ where: { phone } })

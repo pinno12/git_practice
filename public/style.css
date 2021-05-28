@@ -105,8 +105,10 @@
   /* border:1px dashed white !important; */
   width:2vw;
   height:3rem;
+}
 
-
+.btn-dark-blue{
+  background-color: #01C9EE;
 }
 
 .black-stitch{
