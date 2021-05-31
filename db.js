@@ -138,5 +138,6 @@ module.exports = (session) => {
 		isphoneInUse,
 		createUserRecord,
 		isPasswordHashVerified,
+		SoloModel
 	}
 }

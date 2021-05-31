@@ -65,6 +65,23 @@ const Friend = sequelize.define('Friends', {
 globalModelConfig
 )
 
+const Solos = sequelize.define('Solos', {
+	id: {
+		type: Sequelize.INTEGER,
+		primaryKey: true,
+		autoIncrement: true
+	},
+	pros: Sequelize.TEXT,
+	cons: Sequelize.TEXT,
+	age: Sequelize.INTEGER,
+	etc: Sequelize.TEXT,
+	isSolo: Sequelize.BOOLEAN,
+	genter: Sequelize.ENUM('W', 'M'),
+}, 
+globalModelConfig
+)
+
+Solos.belongsTo(UserModel);
 Friend.belongsTo(UserModel);
 
 const getUserByPhone = (phone) => UserModel.findOne({ 

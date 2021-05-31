@@ -1,6 +1,8 @@
 const express = require('express')
+const path = require("path");
+const sqlite3 = require("sqlite3").verbose();
 const bodyParser = require('body-parser')
-const hbs = require( 'express-handlebars')
+
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
 const csurf = require('csurf')
@@ -8,7 +10,7 @@ const helmet = require('helmet')
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
 const db = require('./db')(session)
-
+const model = require('./db')
 const PORT = process.env.PORT || 4008
 
 // express app
@@ -21,27 +23,49 @@ nunjucks.configure('views', {
   autoescape: true,
   express: app
 });
+app.set("views", path.join(__dirname, "views"));
+const db_name = path.join(__dirname, "data", "apptest.db");
+const db2 = new sqlite3.Database(db_name, err => {
+  if (err) {
+    return console.error(err.message);
+  }
+  console.log("Connexion réussie à la base de données 'apptest.db'");
+});
+
 
 app.use(cookieParser())
 app.use(express.static('public'))
-// app.use(bodyParser.json())
-// app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use(session({
 	secret: 'awesome auth',
 	store: db.SessionStore,
 	resave: false,
-	saveUninitialized: true
-}))
+	saveUninitialized: true,
+	cookie           : {
+		httpOnly         : true,
+		resave           : false,
+		saveUninitialized: false,
+		maxAge           : 7776000 * 1000
+
+	}	
+}
+))
 
 // security
 const csrf = csurf({ cookie: true })
 app.use(helmet())
-app.use(csrf)
-app.use((err, req, res, next) => {
-	if (err.code !== 'EBADCSRFTOKEN') return next(err)
-	res.status(403).render('error', { message: 'Invalid form submission!' })
-})
+// app.use(csrf)
+// Store the token in a cookie called '_csrf'
+app.use(csrf);
+
+	
+ 
+// app.use((err, req, res, next) => {
+// 	if (err.code !== 'EBADCSRFTOKEN') return next(err)
+// 	res.status(403).render('error', { message: 'Invalid form submission!!!' })
+// })
 
 // passport
 app.use(passport.initialize())
@@ -106,9 +130,12 @@ app.get("/about", (req, res) => {
 	res.render("subscribe");
   });
 
-  app.get("/create", (req, res) => {
-	res.render("create");
+  app.get("/solo", (req, res) => {
+	  console.log(db.SoloModel)
+	res.render("solo");
   });
+
+
 
 
 app.get('/member', authRequired, (req, res) => {
@@ -156,8 +183,8 @@ app.all('/register', (req, res) => {
 	new Promise(async (resolve, reject) => {
 		if (Object.keys(req.body).length > 0) {
 			if (
-				!(req.body.phone && req.body.phone.length > 1)		
-				|| !(req.body.password && req.body.password.length > 1)			
+				!(req.body.phone && req.body.phone.length >= 1)		
+				|| !(req.body.password && req.body.password.length >= 1)			
 			) {
 				reject('다 채워라잉')
 			}
@@ -223,5 +250,25 @@ app.get('/logout', authRequired, (req, res) => {
 	return res.send('<script>location.href="/";</script>')
 })
 
+app.post('/solo', function(req, res) {
+	console.log(hehe);
+	console.log(req.body.age);
+
+	// db.SoloModel.create({ pros: req.body.pros, age: req.body.age })
+	//  .then( res => {
+	// 	console.log("데이터 추가 완료");          
+	//   })
+	//   .catch( err => {
+	// 	console.log("데이터 추가 실패");
+	// 	res.send("입력란에 문제가 있습니다:<");
+	//   })
+	
+	  res.render('solo', {
+		csrfToken: req.csrfToken(),
+		hasError: (errorMsg && errorMsg.length > 0),
+		error: errorMsg,
+		form: req.body
+	})
+  });
 // App start
 app.listen(PORT, () => console.log(`App listening on port http://localhost:${PORT} !`))

@@ -14,8 +14,12 @@
      
 
 
-<form action="/create" method="post" class="p-5 border rounded-3 bg-light">
-  
+<form method="POST"  class="p-5 border rounded-3 bg-light">
+  <!-- ?_csrf={{_csrf}} -->
+  <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+  {% if hasError %}
+  <div class="error">{{error}}</div>
+{% endif %}
 
     {% include "_editor.html" %}
 
@@ -26,6 +30,7 @@
 
   <small class="text-muted">친구에게 공유하여 바로 연락을 받을 수 있게 하세요</small>
 </form>
+
 </div>
 </div>
 </div>
