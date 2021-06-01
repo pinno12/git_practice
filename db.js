@@ -52,6 +52,7 @@ const SoloModel = sequelize.define('Solo', {
 	},
 	pros: Sequelize.TEXT,
 	cons: Sequelize.TEXT,
+	muze: Sequelize.TEXT,
 	age: Sequelize.INTEGER,
 	etc: Sequelize.TEXT,
 	isSolo: Sequelize.BOOLEAN,

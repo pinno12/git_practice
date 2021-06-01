@@ -15,11 +15,6 @@
 
 
 <form method="POST"  class="p-5 border rounded-3 bg-light">
-  <!-- ?_csrf={{_csrf}} -->
-  <input type="hidden" name="_csrf" value="{{csrfToken}}" />
-  {% if hasError %}
-  <div class="error">{{error}}</div>
-{% endif %}
 
     {% include "_editor.html" %}
 

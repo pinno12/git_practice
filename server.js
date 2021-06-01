@@ -5,7 +5,7 @@ const bodyParser = require('body-parser')
 
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
-const csurf = require('csurf')
+var csrf = require('csurf')
 const helmet = require('helmet')
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
@@ -24,14 +24,6 @@ nunjucks.configure('views', {
   express: app
 });
 app.set("views", path.join(__dirname, "views"));
-const db_name = path.join(__dirname, "data", "apptest.db");
-const db2 = new sqlite3.Database(db_name, err => {
-  if (err) {
-    return console.error(err.message);
-  }
-  console.log("Connexion réussie à la base de données 'apptest.db'");
-});
-
 
 app.use(cookieParser())
 app.use(express.static('public'))
@@ -53,19 +45,13 @@ app.use(session({
 }
 ))
 
-// security
-const csrf = csurf({ cookie: true })
-app.use(helmet())
-// app.use(csrf)
-// Store the token in a cookie called '_csrf'
-app.use(csrf);
+// setup route middlewares
+var csrfProtection = csrf({ cookie: true })
+var parseForm = bodyParser.urlencoded({ extended: false })
 
 	
- 
-// app.use((err, req, res, next) => {
-// 	if (err.code !== 'EBADCSRFTOKEN') return next(err)
-// 	res.status(403).render('error', { message: 'Invalid form submission!!!' })
-// })
+app.use(cookieParser())
+
 
 // passport
 app.use(passport.initialize())
@@ -134,6 +120,25 @@ app.get("/about", (req, res) => {
 	  console.log(db.SoloModel)
 	res.render("solo");
   });
+  app.post('/solo', function(req, res) {
+	var post = req.body;
+	let solo =  {pros: req.body.pros, age: req.body.age, gender: req.body.gender,
+	cons: req.body.cons,
+	muze: post.muze,
+	etc: post.etc,
+	is_solo: post.is_solo
+  }
+	db.SoloModel.create(solo)
+	 .then( res => {
+		console.log(solo,"데이터 추가 완료");          
+	  })
+	  .catch( err => {
+		console.log("데이터 추가 실패");
+		res.send("입력란에 문제가 있습니다:<");
+	  })	
+	  res.render('index', {
+	})
+  });
 
 
 
@@ -171,9 +176,9 @@ app.all('/login', (req, res, next) => {
 			if (!error && req.query.required) errorMsg = '로그인해주세요'
 
 			res.render('login', {
-				csrfToken: req.csrfToken(),
-				hasError: (errorMsg && errorMsg.length > 0),
-				error: errorMsg,
+				// csrfToken: req.csrfToken(),
+				// hasError: (errorMsg && errorMsg.length > 0),
+				// error: errorMsg,
 				form: req.body,
 			})
 		})
@@ -228,8 +233,8 @@ app.all('/register', (req, res) => {
 			}
 			else {
 				res.render('register', {
-					csrfToken: req.csrfToken(),
-					hasError: false,
+					// csrfToken: req.csrfToken(),
+					// hasError: false,
 					form: req.body
 				})
 			}
@@ -237,8 +242,8 @@ app.all('/register', (req, res) => {
 		.catch((error) => {
 			// console.log(error)
 			res.render('register', {
-				csrfToken: req.csrfToken(),
-				hasError: true,
+				// csrfToken: req.csrfToken(),
+				// hasError: true,
 				error,
 				form: req.body
 			})
@@ -250,25 +255,6 @@ app.get('/logout', authRequired, (req, res) => {
 	return res.send('<script>location.href="/";</script>')
 })
 
-app.post('/solo', function(req, res) {
-	console.log(hehe);
-	console.log(req.body.age);
 
-	// db.SoloModel.create({ pros: req.body.pros, age: req.body.age })
-	//  .then( res => {
-	// 	console.log("데이터 추가 완료");          
-	//   })
-	//   .catch( err => {
-	// 	console.log("데이터 추가 실패");
-	// 	res.send("입력란에 문제가 있습니다:<");
-	//   })
-	
-	  res.render('solo', {
-		csrfToken: req.csrfToken(),
-		hasError: (errorMsg && errorMsg.length > 0),
-		error: errorMsg,
-		form: req.body
-	})
-  });
 // App start
 app.listen(PORT, () => console.log(`App listening on port http://localhost:${PORT} !`))
