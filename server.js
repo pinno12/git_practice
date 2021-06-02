@@ -40,7 +40,6 @@ app.use(session({
 		resave           : false,
 		saveUninitialized: false,
 		maxAge           : 7776000 * 1000
-
 	}	
 }
 ))
@@ -126,7 +125,8 @@ app.get("/about", (req, res) => {
 	cons: req.body.cons,
 	muze: post.muze,
 	etc: post.etc,
-	is_solo: post.is_solo
+	is_solo: post.is_solo,
+	user_uid: req.session.user_id
   }
 	db.SoloModel.create(solo)
 	 .then( res => {
@@ -166,9 +166,12 @@ app.all('/login', (req, res, next) => {
 		.then(user => new Promise((resolve, reject) => {
 			req.login(user, err => { // save authentication
 				if (err) return reject(err)
-				console.log(req.body.phone, 'auth completed - redirecting to member area')
+				req.session.username = user.phone;
+				req.session.user_id = user.uid;
+				
+				console.log(req.session.username, 'auth completed - redirecting to member area')
 				// return res.send('<script>location.href="/member";</script>')
-				return res.redirect('/member')
+				return res.redirect('/')
 			})
 		}))
 		.catch(error => {

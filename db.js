@@ -55,11 +55,17 @@ const SoloModel = sequelize.define('Solo', {
 	muze: Sequelize.TEXT,
 	age: Sequelize.INTEGER,
 	etc: Sequelize.TEXT,
-	isSolo: Sequelize.BOOLEAN,
-	gender: Sequelize.ENUM('W','M')
+	is_solo: Sequelize.BOOLEAN,
+	gender: Sequelize.ENUM('W','M'),
+	user_uid: Sequelize.INTEGER
 }, globalModelConfig)
 
-SoloModel.belongsTo(UserModel);
+UserModel.hasMany(SoloModel, {
+	foreignKey: {
+		name: 'user_uid',
+		allowNull: false
+	}
+})
 
 const Friends = sequelize.define('Friends', {
 	id: {
