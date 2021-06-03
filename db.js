@@ -66,6 +66,8 @@ UserModel.hasMany(SoloModel, {
 		allowNull: false
 	}
 })
+SoloModel.belongsTo(UserModel, {as: 'user', constraints: false})
+
 
 const Friends = sequelize.define('Friends', {
 	id: {
