@@ -8,9 +8,9 @@
   <meta property="og:url" content="comz.glitch.me">
   <meta name="author" content="자뷰">
   <meta name="generator" content="Jekyll v4.1.1">
-  <meta property="og:title" content="꼼즈">
-  <meta property="og:description" content="다이마루 토탈 봉제 공장">
-  <meta property="og:image" content="/images/brands/8.png">
+  <meta property="og:title" content="친친">
+  <meta property="og:description" content="친구의 친구를 만나다">
+  <!-- <meta property="og:image" content="/images/brands/8.png"> -->
   <title>친친 | 믿음이 가는 친구의 친구를 만나다 </title>
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Jua&amp;display=swap" rel="stylesheet">
@@ -64,12 +64,14 @@
               <i class="user plus icon"></i>   소개합니다
             </a>
           </li>
+          {% if req.session.username!=null %}
           <li>
             <a href="/register" class="nav-link text-white">
               <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#speedometer2"></use></svg>
               <i class="users icon"></i>가입합니다
             </a>
           </li>
+          {% endif %}
           <li>
             <a href="#" class="nav-link text-white">
               <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#table"></use></svg>
@@ -84,12 +86,19 @@
           </li>
 
           <li>
+            {% if req.session.username!=null %}
+            <a href="/logout" class="nav-link text-white">
+              <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#grid"></use></svg>
+              <i class="smile wink outline icon"></i>로그아웃
+            </a>
+            {% else %}
             <a href="/login" class="nav-link text-white">
               <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#grid"></use></svg>
               <i class="smile wink outline icon"></i>로그인
             </a>
+            {% endif %}
           </li>
-
+    
 
           <li>
             <a href="#" class="nav-link text-white">

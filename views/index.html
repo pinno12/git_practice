@@ -15,6 +15,17 @@
             </button>
             <div class="collapse show" id="home-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+             <li>  
+
+                {% for i in solo %}
+                  <tr>
+                      <td>{{i.id}}</td>
+                      <td>{{i.pros}}</td>
+                      <td>{{i.cons}}</td>
+                      <td>{{i.age}}</td>
+                  </tr>
+              {% endfor %}
+  
                 <li><a href="#" class="link-dark rounded">Overview</a></li>
                 <li><a href="#" class="link-dark rounded">Updates</a></li>
                 <li><a href="#" class="link-dark rounded">Reports</a></li>

@@ -100,9 +100,22 @@ passport.deserializeUser((uid, cb) => {
 
 /* Routes */
 
-app.get('/', (req, res) => {
-	res.render('index')
-})
+app.get('/', authRequired, (req, res) => {
+	db.SoloModel.findAll({
+		where: {
+			user_uid: req.session.user_id
+		}}).then(result=>{		
+			res.render('index', 
+			{
+				solo : result
+			});
+		})
+		.catch(function(err){
+			console.log(err);
+		  });
+		});
+
+
 app.get("/about", (req, res) => {
 	res.render("about");
   });
@@ -115,7 +128,7 @@ app.get("/about", (req, res) => {
 	res.render("subscribe");
   });
 
-  app.get("/solo", (req, res) => {
+  app.get("/solo",authRequired, (req, res) => {
 	  console.log(db.SoloModel)
 	res.render("solo");
   });
@@ -255,7 +268,7 @@ app.all('/register', (req, res) => {
 
 app.get('/logout', authRequired, (req, res) => {
 	req.logout()
-	return res.send('<script>location.href="/";</script>')
+	return res.render('/register')
 })
 
 
