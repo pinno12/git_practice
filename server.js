@@ -107,7 +107,8 @@ app.get('/', authRequired, (req, res) => {
 		}}).then(result=>{		
 			res.render('index', 
 			{
-				solo : result
+				solo : result,
+				user_id: req.session.user_id
 			});
 		})
 		.catch(function(err){
@@ -268,7 +269,7 @@ app.all('/register', (req, res) => {
 
 app.get('/logout', authRequired, (req, res) => {
 	req.logout()
-	return res.render('/register')
+	return res.render('register')
 })
 
 

@@ -61,23 +61,23 @@
           <li>
             <a href="/solo" class="nav-link text-white">
               <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#home"></use></svg>
-              <i class="user plus icon"></i>   소개합니다
+              <i class="user plus icon"></i>  {{user_id}}의 친구를 소개합니다
             </a>
           </li>
-          {% if req.session.username!=null %}
+          {% if not user_id %}
           <li>
             <a href="/register" class="nav-link text-white">
               <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#speedometer2"></use></svg>
-              <i class="users icon"></i>가입합니다
+              <i class="users icon"></i>가입합니다 
             </a>
           </li>
           {% endif %}
-          <li>
+          <!-- <li>
             <a href="#" class="nav-link text-white">
               <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#table"></use></svg>
       만날래요
             </a>
-          </li>
+          </li> -->
           <li>
             <a href="/subscribe" class="nav-link text-white">
               <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#grid"></use></svg>
@@ -86,7 +86,7 @@
           </li>
 
           <li>
-            {% if req.session.username!=null %}
+            {% if user_id %}
             <a href="/logout" class="nav-link text-white">
               <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#grid"></use></svg>
               <i class="smile wink outline icon"></i>로그아웃
