@@ -69,20 +69,25 @@ UserModel.hasMany(SoloModel, {
 SoloModel.belongsTo(UserModel, {as: 'user', constraints: false})
 
 
-const Friends = sequelize.define('Friends', {
+const FriendModel = sequelize.define('Friends', {
 	id: {
 		type: Sequelize.INTEGER,
 		primaryKey: true,
 		autoIncrement: true,
 	},
-	friendPhone: Sequelize.TEXT
+	friend_id: Sequelize.TEXT,
+	user_uid: Sequelize.INTEGER
 }, globalModelConfig)
 
-Friends.belongsTo(UserModel); 
-
-sequelize.sync({
-	alter: true
+FriendModel.sync()
+FriendModel.sync({ alter: true })
+UserModel.hasMany(FriendModel, {
+	foreignKey: {
+		name: 'user_uid',
+		allowNull: false
+	}
 })
+
 
 const getUserById = uid => UserModel.findOne({ where: { uid } })
 const getUserByphone = phone => UserModel.findOne({ where: { phone } })
@@ -147,6 +152,7 @@ module.exports = (session) => {
 		isphoneInUse,
 		createUserRecord,
 		isPasswordHashVerified,
-		SoloModel
+		SoloModel,
+		FriendModel
 	}
 }

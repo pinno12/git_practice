@@ -12,7 +12,13 @@ const LocalStrategy = require('passport-local').Strategy
 const db = require('./db')(session)
 const model = require('./db')
 const PORT = process.env.PORT || 4008
-
+const db_name = path.join(__dirname, "data", "apptest.db");
+const dbS = new sqlite3.Database(db_name, err => {
+  if (err) {
+    return console.error(err.message);
+  }
+  console.log("Connexion réussie à la base de données 'apptest.db'");
+});
 // express app
 const app = express()
 
@@ -99,23 +105,55 @@ passport.deserializeUser((uid, cb) => {
 })
 
 /* Routes */
+app.get("/", authRequired, (req, res) => {
+	let params= req.session.user_id;
+	const sql = "SELECT * 	FROM solos 	WHERE user_uid in (SELECT friend_id FROM friends WHERE user_uid = ?)";
+	dbS.all(sql, params, (err, result) => {
+	  if (err) {
+		return console.error(err.message);
+	  }
+	  res.render("index", { solo : result });
+	});
+  });
 
-app.get('/', authRequired, (req, res) => {
-	db.SoloModel.findAll({
-		where: {
-			user_uid: req.session.user_id
-		}}).then(result=>{		
-			res.render('index', 
-			{
-				solo : result,
-				user_id: req.session.user_id
-			});
-		})
-		.catch(function(err){
-			console.log(err);
-		  });
-		});
+// app.get('/', authRequired, (req, res) => {
+// 	db.FriendModel.findAll({
+// 		attributes: 'friend_phone',
+// 		where: {
+// 			user_uid: req.session.user_id
+// 		}}).then(res => {db.SoloModel.findAll({
+	
+// 			where: {
+// 				user_uid: res
+// 			}})}).then(result=>{		
+// 			res.render('index', 
+// 			{
+// 				solo : result,
+// 				user_id: req.session.user_id
+// 			});
+// 		})
+// 		.catch(function(err){
+// 			console.log(err);
+// 		  });
+// 		});
 
+	/*
+		app.get('/', authRequired, (req, res) => {
+			db.SoloModel.findAll({
+				where: {
+					user_uid: req.session.user_id
+				}}).then(result=>{		
+					res.render('index', 
+					{
+						solo : result,
+						user_id: req.session.user_id
+					});
+				})
+				.catch(function(err){
+					console.log(err);
+				  });
+				});
+		*/
 
 app.get("/about", (req, res) => {
 	res.render("about");
@@ -160,6 +198,27 @@ app.get("/about", (req, res) => {
 app.get('/member', authRequired, (req, res) => {
 	res.render('member')
 })
+app.get("/myfriends",authRequired, (req, res) => {
+
+  res.render("myfriends");
+});
+
+app.post('/myfriends', authRequired, (req, res) => {
+	let friend =  {
+		friend_phone: req.body.friend_phone,	
+		user_uid: req.session.user_id
+	  }
+		db.FriendModel.create(friend)
+		 .then( res => {
+			console.log(friend,"데이터 추가 완료");          
+		  })
+		  .catch( err => {
+			console.log("데이터 추가 실패");
+			res.send("입력란에 문제가 있습니다:<");
+		  })	
+		  res.render('myfriends', {
+		})
+	  });
 
 app.all('/login', (req, res, next) => {
 	new Promise((resolve, reject) => {
@@ -224,7 +283,7 @@ app.all('/register', (req, res) => {
 		.then(isValidFormData => new Promise((resolve, reject) => {
 			if (Object.keys(req.body).length > 0 && isValidFormData) {
 				db.createUserRecord({
-			
+								
 					phone: req.body.phone,
 					password: req.body.password
 				})
