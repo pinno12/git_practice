@@ -56,8 +56,7 @@ const SoloModel = sequelize.define('Solo', {
 	age: Sequelize.INTEGER,
 	etc: Sequelize.TEXT,
 	is_solo: Sequelize.BOOLEAN,
-	gender: Sequelize.ENUM('W','M'),
-	user_uid: Sequelize.INTEGER
+	gender: Sequelize.ENUM('W','M')
 }, globalModelConfig)
 
 UserModel.hasMany(SoloModel, {

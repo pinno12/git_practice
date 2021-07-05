@@ -107,7 +107,7 @@ passport.deserializeUser((uid, cb) => {
 /* Routes */
 app.get("/", authRequired, (req, res) => {
 	let params= [req.session.user_id, req.session.user_id];
-	const sql = "SELECT * 	FROM solos 	WHERE user_uid in (SELECT friend_id FROM friends WHERE user_uid = ?) or user_uid =  ?";
+	const sql = "SELECT * FROM solos INNER JOIN users ON users.uid = solos.user_uid WHERE ( user_uid in (SELECT friend_id FROM friends WHERE user_uid = ?) or user_uid =  ? )";
 	dbS.all(sql, params, (err, result) => {
 	  if (err) {
 		return console.error(err.message);
@@ -151,7 +151,7 @@ app.get("/about", (req, res) => {
 		console.log("데이터 추가 실패");
 		res.send("입력란에 문제가 있습니다:<");
 	  })	
-	  res.render('index', {
+	  res.render('solo', {
 	})
   });
 
