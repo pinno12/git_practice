@@ -68,7 +68,6 @@ UserModel.hasMany(SoloModel, {
 })
 SoloModel.belongsTo(UserModel, {as: 'user', constraints: false})
 
-
 const FriendModel = sequelize.define('Friends', {
 	id: {
 		type: Sequelize.INTEGER,
@@ -77,17 +76,16 @@ const FriendModel = sequelize.define('Friends', {
 	},
 	friend_id: Sequelize.TEXT,
 	user_uid: Sequelize.INTEGER
-}, globalModelConfig)
-
-FriendModel.sync()
-FriendModel.sync({ alter: true })
-UserModel.hasMany(FriendModel, {
-	foreignKey: {
-		name: 'user_uid',
-		allowNull: false
-	}
 })
 
+FriendModel.sync()
+// FriendModel.sync({ alter: true })
+// UserModel.hasMany(FriendModel, {
+// 	foreignKey: {
+// 		name: 'user_uid',
+// 		allowNull: false
+// 	}
+// })
 
 const getUserById = uid => UserModel.findOne({ where: { uid } })
 const getUserByphone = phone => UserModel.findOne({ where: { phone } })

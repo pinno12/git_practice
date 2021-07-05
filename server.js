@@ -106,54 +106,17 @@ passport.deserializeUser((uid, cb) => {
 
 /* Routes */
 app.get("/", authRequired, (req, res) => {
-	let params= req.session.user_id;
-	const sql = "SELECT * 	FROM solos 	WHERE user_uid in (SELECT friend_id FROM friends WHERE user_uid = ?)";
+	let params= [req.session.user_id, req.session.user_id];
+	const sql = "SELECT * 	FROM solos 	WHERE user_uid in (SELECT friend_id FROM friends WHERE user_uid = ?) or user_uid =  ?";
 	dbS.all(sql, params, (err, result) => {
 	  if (err) {
 		return console.error(err.message);
 	  }
-	  res.render("index", { solo : result });
+	  res.render("index", { solo : result,
+		user_id: req.session.user_id
+	});
 	});
   });
-
-// app.get('/', authRequired, (req, res) => {
-// 	db.FriendModel.findAll({
-// 		attributes: 'friend_phone',
-// 		where: {
-// 			user_uid: req.session.user_id
-// 		}}).then(res => {db.SoloModel.findAll({
-	
-// 			where: {
-// 				user_uid: res
-// 			}})}).then(result=>{		
-// 			res.render('index', 
-// 			{
-// 				solo : result,
-// 				user_id: req.session.user_id
-// 			});
-// 		})
-// 		.catch(function(err){
-// 			console.log(err);
-// 		  });
-// 		});
-
-	/*
-		app.get('/', authRequired, (req, res) => {
-			db.SoloModel.findAll({
-				where: {
-					user_uid: req.session.user_id
-				}}).then(result=>{		
-					res.render('index', 
-					{
-						solo : result,
-						user_id: req.session.user_id
-					});
-				})
-				.catch(function(err){
-					console.log(err);
-				  });
-				});
-		*/
 
 app.get("/about", (req, res) => {
 	res.render("about");
@@ -204,21 +167,41 @@ app.get("/myfriends",authRequired, (req, res) => {
 });
 
 app.post('/myfriends', authRequired, (req, res) => {
-	let friend =  {
-		friend_phone: req.body.friend_phone,	
-		user_uid: req.session.user_id
+	// let friend =  {
+	// 	friend_phone: req.body.friend_phone,	
+	// 	user_uid: req.session.user_id
+	//   }
+		
+	//   });
+
+	let params= [req.body.friend_phone];
+	
+	const sql = "SELECT uid	FROM users 	WHERE phone = ?";
+	let sql2 = "INSERT INTO friends (user_uid, friend_id) VALUES (? , ?)"
+	dbS.all(sql, params, (err, myuid) => {
+	  if (err) {
+		return console.error(err.message);
 	  }
-		db.FriendModel.create(friend)
-		 .then( res => {
-			console.log(friend,"데이터 추가 완료");          
-		  })
-		  .catch( err => {
-			console.log("데이터 추가 실패");
-			res.send("입력란에 문제가 있습니다:<");
-		  })	
-		  res.render('myfriends', {
-		})
+	  if (myuid) {console.log(myuid)
+	  let params2 = [req.session.user_id, myuid[0].uid]
+	  console.log(myuid, myuid[0].uid)
+	  dbS.all(sql2, params2, (err, result) => {
+		if (err) {
+		  return console.error(err.message);
+		}
+		res.render("myfriends", { 
+		  user_id: req.session.user_id
 	  });
+	  });
+	}else{
+		res.render("myfriends", { 
+			user_id: req.session.user_id,
+			msg: "친구가 등록되어 있지 않습니다."
+		});
+	}
+	});
+	});
+
 
 app.all('/login', (req, res, next) => {
 	new Promise((resolve, reject) => {
@@ -283,7 +266,6 @@ app.all('/register', (req, res) => {
 		.then(isValidFormData => new Promise((resolve, reject) => {
 			if (Object.keys(req.body).length > 0 && isValidFormData) {
 				db.createUserRecord({
-								
 					phone: req.body.phone,
 					password: req.body.password
 				})
@@ -301,16 +283,15 @@ app.all('/register', (req, res) => {
 		}))
 		.then((createdUserRecord) => {
 			if (createdUserRecord) {
+
 				// Log them in in the session
 				req.login(createdUserRecord, (err) => {
 					console.log(err)
 				})
-				res.render('register-success')
+				res.render('solo')
 			}
 			else {
 				res.render('register', {
-					// csrfToken: req.csrfToken(),
-					// hasError: false,
 					form: req.body
 				})
 			}
@@ -318,8 +299,7 @@ app.all('/register', (req, res) => {
 		.catch((error) => {
 			// console.log(error)
 			res.render('register', {
-				// csrfToken: req.csrfToken(),
-				// hasError: true,
+
 				error,
 				form: req.body
 			})

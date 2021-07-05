@@ -9,9 +9,9 @@ rc.circle(40, 70,80,  {
   stroke: 'white'
 });
 rc.circle(120, 90, 80,  {
-  fill: 'black',
+  fill: '#96E6F5',
   hachureAngle: 60, hachureGap: 5,
-  stroke: 'black'
+  stroke: '#96E6F5'
 });
 
 // ellipse and circle

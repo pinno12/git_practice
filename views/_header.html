@@ -56,15 +56,15 @@
           <div class="ui basic button bg-white black-stitch fw-bold">친</div>   
           <div class="ui inverted button white-stitch mt-3  ">친</div> 
         </a>
-  
         <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
+          {% if user_id %}
           <li>
             <a href="/solo" class="nav-link text-white">
               <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#home"></use></svg>
-              <i class="user plus icon"></i>  {{user_id}}의 친구를 소개합니다
+              <i class="user plus icon"></i> 내 친구를 소개합니다
             </a>
           </li>
-          {% if not user_id %}
+       {% else %}
           <li>
             <a href="/register" class="nav-link text-white">
               <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#speedometer2"></use></svg>
