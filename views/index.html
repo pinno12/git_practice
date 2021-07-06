@@ -54,7 +54,7 @@
               </thead>
               <tbody>          
                 {% for i in solo %}
-                {% if not i.user_uid = user_id  %}
+                {% if i.user_uid !== user_id  %}
                 <tr>
                 <td>{{i.age }}</td>
                 <td>{{i.gender}}</td>

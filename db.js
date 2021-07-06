@@ -56,15 +56,16 @@ const SoloModel = sequelize.define('Solo', {
 	age: Sequelize.INTEGER,
 	etc: Sequelize.TEXT,
 	is_solo: Sequelize.BOOLEAN,
-	gender: Sequelize.ENUM('W','M')
+	gender: Sequelize.ENUM('W','M'),
+	user_phone: Sequelize.TEXT
 }, globalModelConfig)
 
-UserModel.hasMany(SoloModel, {
-	foreignKey: {
-		name: 'user_uid',
-		allowNull: false
-	}
-})
+// UserModel.hasMany(SoloModel, {
+// 	foreignKey: {
+// 		name: 'user_uid',
+// 		allowNull: false
+// 	}
+// })
 SoloModel.belongsTo(UserModel, {as: 'user', constraints: false})
 
 const FriendModel = sequelize.define('Friends', {
@@ -73,8 +74,8 @@ const FriendModel = sequelize.define('Friends', {
 		primaryKey: true,
 		autoIncrement: true,
 	},
-	friend_id: Sequelize.TEXT,
-	user_uid: Sequelize.INTEGER
+	friend_phone: Sequelize.TEXT,
+	user_phone: Sequelize.TEXT
 })
 
 FriendModel.sync()
