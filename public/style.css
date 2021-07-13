@@ -177,8 +177,8 @@ h1, h2, h3, h4, h5, h6 {
 
 :root {
   --main-color:#1b1c1d;
-  --sub-color: yellow;
-  --text-color: pink;
+  --sub-color: #0DCAF4;
+  --text-color: black;
 }
 
 

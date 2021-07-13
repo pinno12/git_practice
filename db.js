@@ -39,7 +39,7 @@ const UserModel = sequelize.define('User', {
 		primaryKey: true,
 		autoIncrement: true,
 	},
-	name: Sequelize.STRING(30),
+	name: Sequelize.TEXT,
 	phone: Sequelize.TEXT,
 	password_hash: Sequelize.STRING(255),
 }, globalModelConfig)
@@ -105,7 +105,8 @@ const createUserRecord = userObj => new Promise(async (resolve, reject) => {
 	UserModel.create({
 
 		phone: userObj.phone,
-		password_hash: passwdHash
+		password_hash: passwdHash,
+		name: userObj.name
 	})
 		.then((createdUser) => {
 			resolve(createdUser)

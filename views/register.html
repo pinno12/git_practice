@@ -16,17 +16,21 @@
         {% if hasError %}
         <div class="error">{{error}}</div>
         {% endif %}
-
+<!-- 
         <div class="form-floating mb-3">
           <input type="text" class="form-control" id="phone" placeholder="name@example.com" name="phone"
             value="{{form.phone}}">
           <label for="phone">핸드폰번호</label>
-        </div>
+        </div> -->
+
+        <label for="exampleInputEmail1" class="form-label">핸드폰 번호</label>
+        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value = "010"
+          name="phone">
+        <div id="emailHelp" class="form-text">-없이 010부터 입력해주세요</div>
 
         <div class="form-floating mb-3">
-          <input type="text" class="form-control" id="username" placeholder="name@example.com" name="name"
-            value="{{form.name}}">
-          <label for="phone">이름</label>
+          <input type="text" class="form-control" id="username" placeholder="야" name="username" value = "{{form.name}}">
+          <label for="username">이름</label>
         </div>
  
         <div class="form-floating mb-3">

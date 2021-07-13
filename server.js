@@ -265,7 +265,8 @@ app.all('/register', (req, res) => {
 			if (Object.keys(req.body).length > 0 && isValidFormData) {
 				db.createUserRecord({
 					phone: req.body.phone,
-					password: req.body.password
+					password: req.body.password,
+					name: req.body.username
 				})
 					.then((createdUser) => {
 						// console.log('====> user created...')
@@ -286,7 +287,7 @@ app.all('/register', (req, res) => {
 				req.login(createdUserRecord, (err) => {
 					console.log(err)
 				})
-				res.render('solo')
+				res.render('login')
 			}
 			else {
 				res.render('register', {
