@@ -1,8 +1,8 @@
 {% include "_header.html" %}
 
-<main role="main" class="flex-shrink-0 mt-4 py-5 container" id = "">
+<main role="main" class="flex-shrink-0 mt-4 py-5 container" id = "content">
   <div class="row justify-content-between">
-    <div class="bg-white d-md-block bg-light col-lg-5 col-11 " >
+    <div class="bg-white d-md-block bg-light col-lg-5 col-11 ui sticky" >
       <h2 class="ui header">
         😘
         <div class="content">
@@ -25,11 +25,7 @@
           {% if i.user_phone == user_phone  %}    
           <tr>
             <td>{{i.age }}</td>
-            {% if i.gender == 'W'  %}
-            <td>여</td>
-            {% else %}
-            <td>남</td>
-            {% endif %}
+            <td>{{i.gender}}</td>
             <td>{{i.pros}}</td>
             <td>{{i.cons}}</td>
             <td>{{i.etc }}</td>
@@ -40,7 +36,7 @@
         </tbody>
       </table>
     </div>
-    <div class="col-lg-6 col-11" id = "content">
+    <div class="col-lg-6 col-11" id = "friends">
 
       <h2 class="ui header">
         👀 
@@ -48,10 +44,8 @@
         친구의 친구들
         </div>
       </h2>
-
-      
-      <div class="">
-        <table class="ui very basic table ">
+      <div class="table-responsive">
+        <table class="table  table-hover">
           <thead>
             <tr>
               <th scope="col">나이</th>
@@ -69,11 +63,7 @@
             {% else %}
             <tr>
               <td>{{i.age }}</td>
-              {% if i.gender == 'W'  %}
-              <td>여</td>
-              {% else %}
-              <td>남</td>
-              {% endif %}
+              <td>{{i.gender}}</td>
               <td>{{i.pros}}</td>
               <td>{{i.cons}}</td>
               <td>{{i.etc }}</td>

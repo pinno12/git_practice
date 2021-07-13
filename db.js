@@ -75,10 +75,11 @@ const FriendModel = sequelize.define('Friends', {
 		autoIncrement: true,
 	},
 	friend_phone: Sequelize.TEXT,
+	friend_name: Sequelize.TEXT,
 	user_phone: Sequelize.TEXT
 })
 
-FriendModel.sync()
+// FriendModel.sync()
 // FriendModel.sync({ alter: true })
 // UserModel.hasMany(FriendModel, {
 // 	foreignKey: {

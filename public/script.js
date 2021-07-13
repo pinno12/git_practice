@@ -15,7 +15,18 @@ rc.circle(120, 90, 80,  {
 });
 
 // ellipse and circle
+$('.ui.sticky')
+  .sticky({
+    context: '#content'
+  })
+;
 
+$('.ui.sidebar')
+  .sidebar('setting', 'transition', 'overlay')
+  // .sidebar('toggle')
+  .sidebar('attach events', '.open.button', 'show')
+  .sidebar('setting','dimPage', false )
+;
 
 $('.ui.modal')
 .modal('show')

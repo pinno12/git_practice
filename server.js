@@ -105,8 +105,8 @@ passport.deserializeUser((uid, cb) => {
 })
 /* Routes */
 app.get("/", authRequired, (req, res) => {
-	let params= [req.session.user_phone, req.session.user_phone];
-	const sql = "SELECT * FROM solos INNER JOIN users ON users.phone = solos.user_phone WHERE ( user_phone in ((SELECT friend_phone FROM friends WHERE user_phone = ?) or (SELECT user_phone FROM friends WHERE friend_phone = ?)) or user_phone =  ? )";
+	let params= [req.session.user_phone, req.session.user_phone, req.session.user_phone];
+	const sql = "SELECT * FROM solos INNER JOIN users ON users.phone = solos.user_phone WHERE (( user_phone in (SELECT friend_phone FROM friends WHERE user_phone = ? UNION ALL SELECT user_phone FROM friends WHERE friend_phone = ?) or user_phone =  ? ))";
 	dbS.all(sql, params, (err, result) => {
 	  if (err) {
 		return console.error(err.message);
@@ -121,17 +121,18 @@ app.get("/about", (req, res) => {
 	res.render("about");
   });
   
-  app.get("/subscribe", (req, res) => {
-	res.render("subscribe");
-  });
 
   app.get("/subscribe", (req, res) => {
-	res.render("subscribe");
+	res.render("subscribe", { 
+		user_phone: req.session.user_phone
+	});
   });
 
   app.get("/solo",authRequired, (req, res) => {
 	  console.log(db.SoloModel)
-	res.render("solo");
+	res.render("solo", { 
+		user_phone: req.session.user_phone
+	});
   });
   app.post('/solo', function(req, res) {
 	var post = req.body;
@@ -150,8 +151,9 @@ app.get("/about", (req, res) => {
 		console.log("데이터 추가 실패");
 		res.send("입력란에 문제가 있습니다:<");
 	  })	
-	  res.render('solo', {
-	})
+	  res.render('solo', { 
+		user_phone: req.session.user_phone
+	});
   });
 
 
@@ -161,37 +163,41 @@ app.get('/member', authRequired, (req, res) => {
 	res.render('member')
 })
 app.get("/myfriends",authRequired, (req, res) => {
-
-  res.render("myfriends");
+	params =  [req.session.user_phone]
+	let sql = "select * from friends where user_phone = ? "
+	dbS.all(sql,params,(err,result)=>{
+		if (err) {
+			return console.error(err.message);
+		  }
+		  res.render("myfriends", { friends: result,
+			user_phone: req.session.user_phone
+		});
+	})
+  
 });
 
 app.post('/myfriends', authRequired, (req, res) => {
-	let params= [req.body.friend_phone];
-	
+	let params= [req.session.user_phone, req.body.friend_phone, req.body.friend_name];	
 	// const sql = "SELECT uid	FROM users 	WHERE phone = ?";
-	let sql2 = "INSERT INTO friends (user_phone, friend_phone) VALUES (? , ?)"
-	dbS.all(sql, params, (err, myuid) => {
-	  if (err) {
-		return console.error(err.message);
-	  }
-	  if (myuid) {console.log(myuid)
-	  let params2 = [req.session.user_phone, myuid[0].uid]
-	  console.log(myuid, myuid[0].uid)
-	  dbS.all(sql2, params2, (err, result) => {
+	let sql = "INSERT INTO friends (user_phone, friend_phone, friend_name) VALUES (? , ?, ?)"
+
+	  dbS.all(sql, params, (err, result) => {
 		if (err) {
 		  return console.error(err.message);
 		}
-		res.render("myfriends", { 
-		  user_phone: req.session.user_phone
+		params2 =  [req.session.user_phone]
+		let sql2 = "select * from friends where user_phone = ? "
+		dbS.all(sql2,params2,(err,result)=>{
+			if (err) {
+				return console.error(err.message);
+			  }
+			  res.render("myfriends", { friends: result,
+				user_phone: req.session.user_phone
+			});
+		})
+
 	  });
-	  });
-	}else{
-		res.render("myfriends", { 
-			user_phone: req.session.user_phone,
-			msg: "친구가 등록되어 있지 않습니다."
-		});
-	}
-	});
+	
 	});
 
 
