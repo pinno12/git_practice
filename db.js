@@ -103,7 +103,6 @@ const isphoneInUse = async phone => {
 const createUserRecord = userObj => new Promise(async (resolve, reject) => {
 	const passwdHash = await createPasswordHash(userObj.password)
 	UserModel.create({
-
 		phone: userObj.phone,
 		password_hash: passwdHash,
 		name: userObj.name

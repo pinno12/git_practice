@@ -16,6 +16,7 @@
           {% for i in solo %}
           {% if i.user_phone == user_phone  %}
           {% else %}
+       
           {% if i.gender == 'W'  %}
           <a class="teal card" style= "background-color: #96e6f5;">
             {% else %}
@@ -92,7 +93,7 @@
               {% if i.muze  %} 
               <p><small class = "text-mute">이상형 </small>{{i.muze}}</p>
               {% endif  %} 
-              <p>{{i.name }}</p>
+           
             </div>
           </div>
           <div class="extra content">

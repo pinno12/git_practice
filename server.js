@@ -105,12 +105,16 @@ passport.deserializeUser((uid, cb) => {
 })
 /* Routes */
 app.get("/", authRequired, (req, res) => {
+	// let params= [req.session.user_phone, req.session.user_phone];
+	// const sql = "SELECT * FROM solos INNER JOIN users ON users.phone = solos.user_phone WHERE ( user_phone in ((SELECT friend_phone FROM friends WHERE user_phone = ?) or (SELECT user_phone FROM friends WHERE friend_phone = ?)) or user_phone =  ? )";
+
 	let params= [req.session.user_phone, req.session.user_phone, req.session.user_phone];
 	const sql = "SELECT * FROM solos INNER JOIN users ON users.phone = solos.user_phone WHERE (( user_phone in (SELECT friend_phone FROM friends WHERE user_phone = ? UNION ALL SELECT user_phone FROM friends WHERE friend_phone = ?) or user_phone =  ? ))";
 	dbS.all(sql, params, (err, result) => {
 	  if (err) {
 		return console.error(err.message);
 	  }
+	//   console.log(result)
 	  res.render("index", { solo : result,
 		user_phone: req.session.user_phone 
 	});
@@ -122,7 +126,7 @@ app.get("/about", (req, res) => {
   });
   
 
-  app.get("/subscribe", (req, res) => {
+  app.get("/subscribe", authRequired,(req, res) => {
 	res.render("subscribe", { 
 		user_phone: req.session.user_phone
 	});
@@ -223,7 +227,7 @@ app.all('/login', (req, res, next) => {
 				req.session.user_phone = user.phone;
 				req.session.user_id = user.uid;
 				
-				console.log(req.session.username, 'auth completed - redirecting to member area')
+				console.log(req.session.user_phone, 'auth completed - redirecting to member area')
 				// return res.send('<script>location.href="/member";</script>')
 				return res.redirect('/')
 			})
@@ -307,7 +311,7 @@ app.all('/register', (req, res) => {
 
 app.get('/logout', authRequired, (req, res) => {
 	req.logout()
-	return res.render('register')
+	return res.redirect('login')
 })
 
 
