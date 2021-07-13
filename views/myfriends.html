@@ -42,13 +42,23 @@
     <div class= "col-lg-4">
       <div class="ui middle aligned animated list">      
         {% for i in friends %}
+        {% if i.user_phone == user_phone  %}
           <div class="item">
             <i class="hand holding heart icon"></i>
             <div class="content">
               <div class="header">{{i.friend_name}} </div>
               {{i.friend_phone}}
             </div>
-          </div>              
+          </div>     
+          {% else %}
+          <div class="item">
+            <i class="hand holding heart icon"></i>
+            <div class="content">
+              <!-- <div class="header">{{i.friend_name}} </div> -->
+              {{i.user_phone}}
+            </div>
+          </div>
+          {% endif %}    
             {% endfor %}
       </div>   
     </div>

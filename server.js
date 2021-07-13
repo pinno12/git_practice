@@ -163,8 +163,8 @@ app.get('/member', authRequired, (req, res) => {
 	res.render('member')
 })
 app.get("/myfriends",authRequired, (req, res) => {
-	params =  [req.session.user_phone]
-	let sql = "select * from friends where user_phone = ? "
+	params =  [req.session.user_phone, req.session.user_phone]
+	let sql = "select * from friends where user_phone = ? UNION ALL SELECT * FROM friends WHERE friend_phone = ?"
 	dbS.all(sql,params,(err,result)=>{
 		if (err) {
 			return console.error(err.message);

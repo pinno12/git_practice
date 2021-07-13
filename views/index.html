@@ -9,38 +9,49 @@
           내 친구들
         </div>
       </h2>
-      <table class="table  table-hover border-info">
-        <thead>
-          <tr>
-            <th scope="col">나이</th>
-            <th scope="col">성별</th>
-            <th scope="col">장점</th>
-            <th scope="col">아쉬운 점</th>
-            <th scope="col">사는곳/직장</th>
-            <th scope="col">이상형</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for i in solo %}         
-          {% if i.user_phone == user_phone  %}    
-          <tr>
-            <td>{{i.age }}</td>
-            {% if i.gender == 'W'  %}
-            <td>여</td>
-            {% else %}
-            <td>남</td>
+
+      <div class="ui three doubling inverted cards">
+        {% for i in solo %}
+        {% if i.user_phone == user_phone  %}
+      
+        {% if i.gender == 'W'  %}
+        <a class="teal card" >
+          <!-- style= "background-color: f2fcfe;" -->
+          {% else %}
+          <a class="black card">
             {% endif %}
-            <td>{{i.pros}}</td>
-            <td>{{i.cons}}</td>
-            <td>{{i.etc }}</td>
-            <td>{{i.muze }}</td>
-          </tr>
-          {% endif %}
-          {% endfor %}
-        </tbody>
-      </table>
+          <div class="content">
+            <div class="header">{{i.age }}살
+<small>
+              {% if i.gender == 'W'  %}
+              여자
+              {% else %}
+              남자
+              {% endif %}
+            </small>
+            </div>
+            <div class="meta">{{i.pros}}</div>
+            <div class="description">
+              {% if i.cons  %} 
+              <p><small class = "text-mute">아쉬운 점은..</small>{{i.cons}}</p>            
+              {% endif %}
+              {% if i.muze  %} 
+              <p><small class = "text-mute">이상형 </small>{{i.muze}}</p>
+              {% endif  %} 
+              <p>{{i.name }}</p>
+            </div>
+          </div>
+          <div class="extra content">
+            <i class="check icon"></i>
+            {{i.etc}}
+          </div>
+        </a>
+        {% endif %}
+        {% endfor %}
+  </div>
+  
     </div>
-    <div class="col-lg-6 col-11" id = "content">
+    <div class="col-lg-6 col-11 mt-3" id = "content">
 
       <h2 class="ui header">
         👀 
@@ -50,42 +61,48 @@
       </h2>
 
       
-      <div class="">
-        <table class="ui very basic table ">
-          <thead>
-            <tr>
-              <th scope="col">나이</th>
-              <th scope="col">성별</th>
-              <th scope="col">장점</th>
-              <th scope="col">아쉬운 점</th>
-              <th scope="col">사는곳/직장</th>
-              <th scope="col">이상형</th>
-              <th>친구 번호</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for i in solo %}
-            {% if i.user_phone == user_phone  %}
+    
+        <div class="ui three doubling cards">
+          {% for i in solo %}
+          {% if i.user_phone == user_phone  %}
+          {% else %}
+          {% if i.gender == 'W'  %}
+          <a class="teal card" style= "background-color: #96e6f5;">
             {% else %}
-            <tr>
-              <td>{{i.age }}</td>
-              {% if i.gender == 'W'  %}
-              <td>여</td>
-              {% else %}
-              <td>남</td>
+            <a class="black card">
               {% endif %}
-              <td>{{i.pros}}</td>
-              <td>{{i.cons}}</td>
-              <td>{{i.etc }}</td>
-              <td>{{i.muze }}</td>
-              <td>{{i.phone }}</td>
-            </tr>
-            {% endif %}
-            {% endfor %}
-          </tbody>
-        </table>    
+            <div class="content">
+              <div class="header">{{i.age }}살
+                <small>
+                              {% if i.gender == 'W'  %}
+                              여자
+                              {% else %}
+                              남자
+                              {% endif %}
+                            </small>
+                            </div>
+              <div class="meta">{{i.pros}}</div>
+              <div class="description">
+                {% if i.cons  %} 
+                <p><small class = "text-mute">아쉬운 점은..</small>{{i.cons}}</p>            
+                {% endif %}
+                {% if i.muze  %} 
+                <p><small class = "text-mute">이상형 </small>{{i.muze}}</p>
+                {% endif  %} 
+                <p>{{i.name }}의 친구</p>
+              </div>
+            </div>
+            <div class="extra content">
+              <i class="check icon"></i>
+              {{i.etc}}
+            </div>
+          </a>
+          {% endif %}
+          {% endfor %}
+         
+        
     </div>
-  </div>
+  
   </div>
   </div>
 </main>
