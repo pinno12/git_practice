@@ -2,65 +2,15 @@
 
 <main role="main" class="flex-shrink-0 mt-4 py-5 container" id = "">
   <div class="row justify-content-between">
-    <div class="bg-white d-md-block bg-light col-lg-5 col-11 " >
-      <h2 class="ui header">
-        😘
-        <div class="content">
-          내 친구들
-        </div>
-      </h2>
 
-      <div class="ui three doubling inverted cards">
-        {% for i in solo %}
-        {% if i.user_phone == user_phone  %}
-      
-        {% if i.gender == 'W'  %}
-        <a class="teal card" >
-          <!-- style= "background-color: f2fcfe;" -->
-          {% else %}
-          <a class="black card">
-            {% endif %}
-          <div class="content">
-            <div class="header">{{i.age }}살
-<small>
-              {% if i.gender == 'W'  %}
-              여자
-              {% else %}
-              남자
-              {% endif %}
-            </small>
-            </div>
-            <div class="meta">{{i.pros}}</div>
-            <div class="description">
-              {% if i.cons  %} 
-              <p><small class = "text-mute">아쉬운 점은..</small>{{i.cons}}</p>            
-              {% endif %}
-              {% if i.muze  %} 
-              <p><small class = "text-mute">이상형 </small>{{i.muze}}</p>
-              {% endif  %} 
-              <p>{{i.name }}</p>
-            </div>
-          </div>
-          <div class="extra content">
-            <i class="check icon"></i>
-            {{i.etc}}
-          </div>
-        </a>
-        {% endif %}
-        {% endfor %}
-  </div>
-  
-    </div>
-    <div class="col-lg-6 col-11 mt-3" id = "content">
+    <div class="col-lg-6 col-11 mb-3" id = "content">
 
       <h2 class="ui header">
         👀 
         <div class="content">
         친구의 친구들
         </div>
-      </h2>
-
-      
+      </h2>      
     
         <div class="ui three doubling cards">
           {% for i in solo %}
@@ -104,6 +54,58 @@
     </div>
   
   </div>
+  
+    <div class="bg-white d-md-block bg-light col-lg-5 col-11 " >
+      <h2 class="ui header">
+        😘
+        <div class="content">
+          내 친구들
+        </div>
+      </h2>
+
+      <div class="ui three doubling cards">
+        {% for i in solo %}
+        {% if i.user_phone == user_phone  %}
+      
+        {% if i.gender == 'W'  %}
+        <a class="teal card" >
+          <!-- style= "background-color: f2fcfe;" -->
+          {% else %}
+         
+          <a class="black card" style= "background-color: #96e6f5;">
+            {% endif %}
+          <div class="content">
+            <div class="header">{{i.age }}살
+<small>
+              {% if i.gender == 'W'  %}
+              여자
+              {% else %}
+              남자
+              {% endif %}
+            </small>
+            </div>
+            <div class="meta">{{i.pros}}</div>
+            <div class="description">
+              {% if i.cons  %} 
+              <p><small class = "text-mute">아쉬운 점은..</small>{{i.cons}}</p>            
+              {% endif %}
+              {% if i.muze  %} 
+              <p><small class = "text-mute">이상형 </small>{{i.muze}}</p>
+              {% endif  %} 
+              <p>{{i.name }}</p>
+            </div>
+          </div>
+          <div class="extra content">
+            <i class="check icon"></i>
+            {{i.etc}}
+          </div>
+        </a>
+        {% endif %}
+        {% endfor %}
+  </div>
+  
+    </div>
+ 
   </div>
 </main>
 {% include "_footer.html" %}
